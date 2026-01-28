@@ -168,8 +168,8 @@ async def score_new_lead(request: Request):
 @app.post("/zoho/ingest_contacts")
 async def ingest_contacts_api(request: Request):
     payload = await request.json()
-    refresh_token = payload.get("Refresh_Token")
+    refresh_token = payload.get("Refresh_Token" ,str)
     if not refresh_token:
         raise HTTPException(status_code=400, detail="Missing Refresh_Token in payload")
-    result = ingest_contacts()
+    result = ingest_contacts(refresh_token)
     return result
