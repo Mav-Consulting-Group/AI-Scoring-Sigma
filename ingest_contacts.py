@@ -17,7 +17,7 @@ pc = Pinecone(api_key=PINECONE_API_KEY)
 
 
 def ingest_contacts(refresh_token: str):
-    org_id = fetch_org_id()
+    org_id = fetch_org_id(refresh_token)
     index_name = f"{BASE_INDEX_NAME}-{org_id}"
     index = pc.Index(index_name)
 
