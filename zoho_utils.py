@@ -20,8 +20,8 @@ def _refresh_access_token(refresh_token: str):
     """
     global _token_cache
     now = time.time()
-    #if _token_cache["access_token"] and _token_cache["expires_at"] > now + 60:
-        #return _token_cache["access_token"]
+    if _token_cache["access_token"] and _token_cache["expires_at"] > now + 60:
+        return _token_cache["access_token"]
 
     token_url = ZOHO_TOKEN_URL
     params = {
@@ -127,7 +127,7 @@ def fetch_org_variable(var_name: str, refresh_token=None):
     url = f"{ZOHO_API_DOMAIN}/settings/variables/{var_name}"
     r = requests.get(url, headers=_zoho_headers(refresh_token), timeout=30)
     print(r)
-    if r.status_code == 200:
+    if r.status_code == 204:
         data = r.json()
         print(data)
         return data.get("Org_Variables", [{}])[0].get("Value")
