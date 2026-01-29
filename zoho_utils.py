@@ -128,6 +128,7 @@ def fetch_org_variable(var_name: str, refresh_token=None):
     r = requests.get(url, headers=_zoho_headers(refresh_token), timeout=30)
     print(r)
     if r.status_code == 204:
+        r.raise_for_status()
         data = r.json()
         print(data)
         return data.get("Org_Variables", [{}])[0].get("Value")
