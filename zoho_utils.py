@@ -20,8 +20,8 @@ def _refresh_access_token(refresh_token: str):
     """
     global _token_cache
     now = time.time()
-    if _token_cache["access_token"] and _token_cache["expires_at"] > now + 60:
-        return _token_cache["access_token"]
+    #if _token_cache["access_token"] and _token_cache["expires_at"] > now + 60:
+        #return _token_cache["access_token"]
 
     token_url = ZOHO_TOKEN_URL
     params = {
