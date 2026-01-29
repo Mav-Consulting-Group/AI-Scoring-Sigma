@@ -16,7 +16,7 @@ openai_client = OpenAI(api_key=OPENAI_API_KEY)
 pc = Pinecone(api_key=PINECONE_API_KEY)
 
 
-def ingest_contacts(refresh_token: str):
+async def ingest_contacts(refresh_token: str):
     org_id = fetch_org_id(refresh_token)
     index_name = f"{BASE_INDEX_NAME}-{org_id}"
 
@@ -25,7 +25,7 @@ def ingest_contacts(refresh_token: str):
         pc.create_index(name=index_name, dimension=1536, metric="cosine", spec=ServerlessSpec(cloud="aws", region=PINECONE_REG))
     index = pc.Index(index_name)
 
-    contacts = fetch_all_contacts(refresh_token)
+    contacts = await fetch_all_contacts(refresh_token)
 
     print(f"Fetched {len(contacts)} contacts from Zoho")
 
