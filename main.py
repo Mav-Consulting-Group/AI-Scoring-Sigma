@@ -171,5 +171,5 @@ async def ingest_contacts_api(request: Request):
     refresh_token = payload.get("Refresh_Token" ,str)
     if not refresh_token:
         raise HTTPException(status_code=400, detail="Missing Refresh_Token in payload")
-    result = ingest_contacts(refresh_token)
+    result = await ingest_contacts(refresh_token)
     return result
