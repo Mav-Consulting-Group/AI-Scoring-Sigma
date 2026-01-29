@@ -53,7 +53,7 @@ async def fetch_all_contacts(refresh_token:str,per_page: int = 200, max_pages: i
     """
     page = 1
     collected = []
-    selected = await fetch_org_variable("aileadscore__AI_Weight", refresh_token)
+    selected = fetch_org_variable("aileadscore__AI_Weight", refresh_token)
     selected = await selected.json()
     fields = selected.get("Contacts",str)
     while True:
