@@ -124,14 +124,15 @@ def update_zoho_lead_score(refreshToken:str, lead_id: str, score: int, justifica
     return r.json()
 
 def fetch_org_variable(var_name: str, refresh_token=None):
-    url = f"{ZOHO_API_DOMAIN}/settings/variables/{var_name}"
+    url = f"{ZOHO_API_DOMAIN}/settings/variables"
     r = requests.get(url, headers=_zoho_headers(refresh_token), timeout=30)
     print(r)
-    if r.status_code == 204:
-        r.raise_for_status()
+    if r.status_code == 200:
         data = r.json()
-        print(data)
-        return data.get("Org_Variables", [{}])[0].get("Value")
+        variables = data.get("variables", [])
+        for v in variables:
+            if v.get("api_name") == var_name:
+                return v.get("value")
     return None
 
 def fetch_org_id(refresh_token:str):
