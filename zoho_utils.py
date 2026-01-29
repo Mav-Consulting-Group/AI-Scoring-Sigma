@@ -20,8 +20,8 @@ def _refresh_access_token(refresh_token: str):
     """
     global _token_cache
     now = time.time()
-    #if _token_cache["access_token"] and _token_cache["expires_at"] > now + 60:
-        #return _token_cache["access_token"]
+    if _token_cache["access_token"] and _token_cache["expires_at"] > now + 60:
+        return _token_cache["access_token"]
 
     token_url = ZOHO_TOKEN_URL
     params = {
@@ -47,15 +47,17 @@ def _zoho_headers(rt:str):
 
 
 # --------------------- Contacts ---------------------
-def fetch_all_contacts(refresh_token:str,per_page: int = 200, max_pages: int | None = None):
+async def fetch_all_contacts(refresh_token:str,per_page: int = 200, max_pages: int | None = None):
     """
     Fetch all contacts from Zoho CRM with pagination.
     """
     page = 1
     collected = []
+    selected = await fetch_org_variable("aileadscore__AI_Weight", refresh_token).json()
+    fields = selected.get("Contacts",str)
     while True:
         url = f"{ZOHO_API_DOMAIN}/Contacts"
-        params = {"page": page, "per_page": per_page}
+        params = {"page": page, "per_page": per_page, "fields": fields}
         r = requests.get(url, headers=_zoho_headers(refresh_token), params=params, timeout=30)
         r.raise_for_status()
         payload = r.json()
@@ -72,15 +74,17 @@ def fetch_all_contacts(refresh_token:str,per_page: int = 200, max_pages: int | N
 
 
 # --------------------- Leads ---------------------
-def fetch_all_leads_from_zoho(refresh_token:str,per_page: int = 200, max_pages: int | None = None):
+async def fetch_all_leads_from_zoho(refresh_token:str,per_page: int = 200, max_pages: int | None = None):
     """
     Fetch all leads from Zoho CRM with pagination.
     """
     page = 1
     collected = []
+    selected = await fetch_org_variable("aileadscore__AI_Weight", refresh_token).json()
+    fields = selected.get("Leads",str)
     while True:
         url = f"{ZOHO_API_DOMAIN}/Leads"
-        params = {"page": page, "per_page": per_page}
+        params = {"page": page, "per_page": per_page, "fields": fields}
         r = requests.get(url, headers=_zoho_headers(refresh_token), params=params, timeout=30)
         r.raise_for_status()
         payload = r.json()
