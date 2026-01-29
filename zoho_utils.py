@@ -47,14 +47,14 @@ def _zoho_headers(rt:str):
 
 
 # --------------------- Contacts ---------------------
-async def fetch_all_contacts(refresh_token:str,per_page: int = 200, max_pages: int | None = None):
+def fetch_all_contacts(refresh_token:str,per_page: int = 200, max_pages: int | None = None):
     """
     Fetch all contacts from Zoho CRM with pagination.
     """
     page = 1
     collected = []
     selected = fetch_org_variable("aileadscore__AI_Weight", refresh_token)
-    selected = await selected.json()
+    selected = selected.json()
     fields = selected.get("Contacts",str)
     while True:
         url = f"{ZOHO_API_DOMAIN}/Contacts"
@@ -75,13 +75,13 @@ async def fetch_all_contacts(refresh_token:str,per_page: int = 200, max_pages: i
 
 
 # --------------------- Leads ---------------------
-async def fetch_all_leads_from_zoho(refresh_token:str,per_page: int = 200, max_pages: int | None = None):
+def fetch_all_leads_from_zoho(refresh_token:str,per_page: int = 200, max_pages: int | None = None):
     """
     Fetch all leads from Zoho CRM with pagination.
     """
     page = 1
     collected = []
-    selected = await fetch_org_variable("aileadscore__AI_Weight", refresh_token).json()
+    selected = fetch_org_variable("aileadscore__AI_Weight", refresh_token).json()
     fields = selected.get("Leads",str)
     while True:
         url = f"{ZOHO_API_DOMAIN}/Leads"
