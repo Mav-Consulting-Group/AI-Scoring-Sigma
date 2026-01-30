@@ -54,7 +54,7 @@ def fetch_all_contacts(refresh_token:str,per_page: int = 200, max_pages: int | N
     """
     page = 1
     collected = []
-    selected = fetch_org_variable("aileadscore_AI_Weight", refresh_token)
+    selected = fetch_org_variable("aileadscore__AI_Weight", refresh_token)
     selected = json.loads(selected)
     fields = selected["Contacts"]
     while True:
@@ -82,8 +82,9 @@ def fetch_all_leads_from_zoho(refresh_token:str,per_page: int = 200, max_pages: 
     """
     page = 1
     collected = []
-    selected = fetch_org_variable("aileadscore__AI_Weight", refresh_token).json()
-    fields = selected.get("Leads",str)
+    selected = fetch_org_variable("aileadscore__AI_Weight", refresh_token)
+    selected = json.loads(selected)
+    fields = selected["Leads"]
     while True:
         url = f"{ZOHO_API_DOMAIN}/Leads"
         params = {"page": page, "per_page": per_page, "fields": fields}
