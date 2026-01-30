@@ -31,6 +31,8 @@ def ingest_contacts(refresh_token: str):
 
     for contact in contacts:
         contact_id = contact.get("id")
+        if isinstance(contact.get("Account_Name"), dict):
+            contact["Account_Name"] = contact["Account_Name"].get("id")
         text = json.dumps(contact)
         emb = openai_client.embeddings.create(model="text-embedding-3-small", input=[text])
         vec = emb.data[0].embedding
