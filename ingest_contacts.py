@@ -15,6 +15,32 @@ PINECONE_REG = os.getenv("PINECONE_REG", "us-west1")
 openai_client = OpenAI(api_key=OPENAI_API_KEY)
 pc = Pinecone(api_key=PINECONE_API_KEY)
 
+def sanitize_metadata(obj):
+    clean = {}
+    for k, v in obj.items():
+
+        if v is None:
+            continue
+
+        # lookup fields → keep only ID
+        if isinstance(v, dict):
+            if "id" in v and v["id"] is not None:
+                clean[k] = str(v["id"])
+            continue
+
+        # lists → only primitive strings
+        if isinstance(v, list):
+            vals = [str(x) for x in v if x is not None and isinstance(x, (str, int, bool))]
+            if vals:
+                clean[k] = vals
+            continue
+
+        # primitives
+        if isinstance(v, (str, int, bool)):
+            clean[k] = v
+
+    return clean
+
 
 def ingest_contacts(refresh_token: str):
     org_id = fetch_org_id(refresh_token)
@@ -31,12 +57,11 @@ def ingest_contacts(refresh_token: str):
 
     for contact in contacts:
         contact_id = contact.get("id")
-        if isinstance(contact.get("Account_Name"), dict):
-            contact["Account_Name"] = contact["Account_Name"].get("id")
-        text = json.dumps(contact)
+        metadata = sanitize_metadata(contact)
+        text = json.dumps(metadata)
         emb = openai_client.embeddings.create(model="text-embedding-3-small", input=[text])
         vec = emb.data[0].embedding
-        index.upsert(vectors=[{"id": str(contact_id), "values": vec, "metadata": contact}])
+        index.upsert(vectors=[{"id": str(contact_id), "values": vec, "metadata": metadata}])
 
     print("✅ Ingestion completed.")
     return {"status": "success", "count": len(contacts)}
